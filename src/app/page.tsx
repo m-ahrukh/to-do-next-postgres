@@ -24,7 +24,6 @@ export default async function Home() {
     'use server'
     let note = data.get("note")?.valueOf();
     //let tasksLength = result.length
-
     // try {
     //   const newNote = await pool.query("INSERT INTO todo(text) VALUES ($1) RETURNING *", [note])
     //   console.log(newNote.rows[0])
@@ -39,13 +38,13 @@ export default async function Home() {
   async function deleteTask(data) {
     'use server'
     let id = data.get('id').valueOf()
+
     // try {
     //   const taskToBeDeleted = await pool.query('DELETE FROM todo WHERE id = $1', [id])
     // }
     // catch (err) {
     //   console.log("Error ", err)
     // }
-
     await DELETE(12);
     redirect('/')
   }

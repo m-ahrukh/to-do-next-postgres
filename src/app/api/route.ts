@@ -10,7 +10,6 @@ export async function GET() {
 }
 
 export async function POST(data: string) {
-   
     try {
         const newNote = await pool.query("INSERT INTO todo(text) VALUES ($1) RETURNING *", [data])
         console.log("In API fle: " , newNote.rows[0])
@@ -25,11 +24,19 @@ export async function POST(data: string) {
 
 }
 
-export async function PATCH() {
-    return NextResponse.json({
-        id: 1,
-        text: "Tas1"
-    })
+export async function PATCH(note: string, id: number) {
+
+    try {
+        const updatedTask = await pool.query("UPDATE todo SET text = $1 WHERE id = $2 RETURNING *", [note, id])
+        console.log(updatedTask.rows[0])
+        const result = updatedTask.rowCount[0]
+        return NextResponse.json({
+           result
+        })
+      }
+      catch (err) {
+        console.log("Error ", err)
+      }
 }
 
 export async function DELETE(id: number) {

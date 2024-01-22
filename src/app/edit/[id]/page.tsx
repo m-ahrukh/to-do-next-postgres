@@ -1,3 +1,5 @@
+import { PATCH } from "@/app/api/route";
+import { GET } from "@/app/api/tasks/[id]/route";
 import dbConnect, { pool } from "@/utils/dbConnect";
 import { redirect } from "next/navigation";
 
@@ -6,20 +8,31 @@ export default async function Edit({ params }) {
   dbConnect()
   let id = params.id
 
-  const data = await pool.query("select * from todo where id = $1 ", [id])
-  const result = data.rows[0]
+  // const data = await pool.query("select * from todo where id = $1 ", [id])
+  // const result = data.rows[0]
+
+  const response = await GET(id)
+  const responseData = await response.json();
+
+  if (!responseData) {
+    return null;
+  }
+
+  const result = responseData.result;
 
   async function editTask(data) {
     'use server'
     let note = data.get('note').valueOf()
 
-    try {
-      const updatedTask = await pool.query("UPDATE todo SET text = $1 WHERE id = $2 RETURNING *", [note, id])
-      console.log(updatedTask.rows[0])
-    }
-    catch (err) {
-      console.log("Error ", err)
-    }
+    // try {
+    //   const updatedTask = await pool.query("UPDATE todo SET text = $1 WHERE id = $2 RETURNING *", [note, id])
+    //   console.log(updatedTask.rows[0])
+    // }
+    // catch (err) {
+    //   console.log("Error ", err)
+    // }
+
+    PATCH(note, id)
     redirect('/')
   }
 

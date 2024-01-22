@@ -1,9 +1,7 @@
 import dbConnect, { pool } from '@/utils/dbConnect'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { GET } from './api/route'
-import { v4 as uuidv4 } from 'uuid';
-
+import { DELETE, GET, POST} from './api/route'
 
 export default async function Home() {
 
@@ -13,7 +11,7 @@ export default async function Home() {
   // const result = data.rows
 
   const response = await GET()
-  const responseData = await response.json(); // Await the response.json()
+  const responseData = await response.json();
 
   if (!responseData) {
     return null;
@@ -25,27 +23,30 @@ export default async function Home() {
   async function addTask(data) {
     'use server'
     let note = data.get("note")?.valueOf();
-    let tasksLength = result.length
+    //let tasksLength = result.length
 
-    try {
-      const newNote = await pool.query("INSERT INTO todo(text) VALUES ($1) RETURNING *", [note])
-      console.log(newNote.rows[0])
-    }
-    catch (err) {
-      console.log("Error ", err)
-    }
+    // try {
+    //   const newNote = await pool.query("INSERT INTO todo(text) VALUES ($1) RETURNING *", [note])
+    //   console.log(newNote.rows[0])
+    // }
+    // catch (err) {
+    //   console.log("Error ", err)
+    // }
+    await POST(note)
     redirect('/')
   }
 
   async function deleteTask(data) {
     'use server'
     let id = data.get('id').valueOf()
-    try {
-      const taskToBeDeleted = await pool.query('DELETE FROM todo WHERE id = $1', [id])
-    }
-    catch (err) {
-      console.log("Error ", err)
-    }
+    // try {
+    //   const taskToBeDeleted = await pool.query('DELETE FROM todo WHERE id = $1', [id])
+    // }
+    // catch (err) {
+    //   console.log("Error ", err)
+    // }
+
+    await DELETE(12);
     redirect('/')
   }
 

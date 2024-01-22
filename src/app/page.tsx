@@ -1,13 +1,25 @@
 import dbConnect, { pool } from '@/utils/dbConnect'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import { GET } from './api/route'
+import { v4 as uuidv4 } from 'uuid';
+
 
 export default async function Home() {
 
   dbConnect()
 
-  const data = await pool.query("sELECT * FROM todo")
-  const result = data.rows
+  // const data = await pool.query("sELECT * FROM todo")
+  // const result = data.rows
+
+  const response = await GET()
+  const responseData = await response.json(); // Await the response.json()
+
+  if (!responseData) {
+    return null;
+  }
+
+  const result = responseData.result || [];
 
   //Insert Query
   async function addTask(data) {
@@ -16,7 +28,7 @@ export default async function Home() {
     let tasksLength = result.length
 
     try {
-      const newNote = await pool.query("INSERT INTRO todo(id, text) VALUES ($1, $2) RETURNING *", [tasksLength + 1, note])
+      const newNote = await pool.query("INSERT INTO todo(text) VALUES ($1) RETURNING *", [note])
       console.log(newNote.rows[0])
     }
     catch (err) {
@@ -44,7 +56,7 @@ export default async function Home() {
         <h1 className='text-center m-5 font-semibold'>
           Add Task
         </h1>
-        <form action={addTask} className='flex flex-col justify-center items-center'>
+        <form action={(addTask)} className='flex flex-col justify-center items-center'>
           <input type='text' name='note' id='note' placeholder='Add Note'
             className='shadow-lg rounded-md shadow-black h-10 p-3 mb-6' />
           <button type='submit' className='bg-orange-500 font-bold text-white hover:bg-red-600 p-3 rounded-md'>SUBMIT</button>
